@@ -1,0 +1,165 @@
+@Get Product Group
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/rankdata47/rank_productgroup/' \
+  -H 'accept: application/json'
+
+return:
+
+[
+  {
+    "product": "(D)ECT-0201-7465"
+  },
+  {
+    "product": "Test"
+  },
+  {
+    "product": "xxxx"
+  }
+]
+
+
+
+@Get Product Lot
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/rankdata47/rank_lotgroup/{product}' \
+  -H 'accept: application/json'
+
+
+return:
+
+[
+  {
+    "lot": "YYY"
+  }
+]
+
+
+@Get data between date time
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/rankdata47/last_start{YYYY-MM-DD HH:MM:SS}:end{YYYY-MM-DD HH:MM:SS}' \
+  -H 'accept: application/json'
+
+
+[
+  {
+    "id": 3,
+    "product": "xxxx",
+    "lot": "xxxx",
+    "W1": 10,
+    "W2": 10,
+    "L1": 10,
+    "L2": 10,
+    "SQR1": 10,
+    "SQR2": 10,
+    "SQR3": 10,
+    "SQR4": 10,
+    "SQR5": 10,
+    "SQR6": 10,
+    "SQR7": 10,
+    "SQR8": 10,
+    "ST1": 10,
+    "ST2": 10,
+    "ST3": 10,
+    "ST4": 10,
+    "result": "string",
+    "created_date": "2022-08-30T16:00:43.686719",
+    "update_date": "2022-08-30T16:00:43.686719"
+  }
+]
+
+
+
+@Get Counter
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/counter/' \
+  -H 'accept: application/json'
+
+
+return:
+
+[
+  {
+    "id": 1,
+    "belt_name1": "NGR",
+    "belt_name2": "67",
+    "belt_name3": "68",
+    "belt_name4": "56",
+    "belt_name5": "-",
+    "belt_name6": "-",
+    "belt_name7": "-",
+    "belt_name8": "-",
+    "belt_name9": "-",
+    "belt_name10": "-",
+    "belt_name11": "-",
+    "belt_name12": "-",
+    "belt_name13": "-",
+    "belt_name14": "-",
+    "belt_name15": "-",
+    "belt_name16": "-",
+    "belt_count1": 16,
+    "belt_count2": 102,
+    "belt_count3": 2330,
+    "belt_count4": 0,
+    "belt_count5": 0,
+    "belt_count6": 0,
+    "belt_count7": 0,
+    "belt_count8": 0,
+    "belt_count9": 0,
+    "belt_count10": 0,
+    "belt_count11": 0,
+    "belt_count12": 0,
+    "belt_count13": 0,
+    "belt_count14": 0,
+    "belt_count15": 0,
+    "belt_count16": 0,
+    "ProductName": "(D)ECT-0201-7465",
+    "Customer": "YAGEO-NEW",
+    "GroupID": "001283",
+    "LotNumber": "xxxx",
+    "Operator": "xxx",
+    "Start": "1/1/1904 7:00:00 AM",
+    "Finish": "Not Finish",
+    "created_date": "2022-08-29T15:49:05.902146",
+    "update_date": "2022-08-30T16:23:16.124052"
+  }
+]
+
+
+@Get Rank data by product lot
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/rankdata47/rankdataby/{product},{lot}' \
+  -H 'accept: application/json'
+
+return:
+
+[
+  {
+    "id": 1,
+    "product": "Test",
+    "lot": "YYY",
+    "W1": 11.023,
+    "W2": 32,
+    "L1": 343,
+    "L2": 334,
+    "SQR1": 1,
+    "SQR2": 1,
+    "SQR3": 1,
+    "SQR4": 1,
+    "SQR5": 1,
+    "SQR6": 1,
+    "SQR7": 1,
+    "SQR8": 1,
+    "ST1": 0,
+    "ST2": 0,
+    "ST3": 0,
+    "ST4": 0,
+    "result": "string",
+    "created_date": "2022-08-29T16:47:15.650377",
+    "update_date": "2022-08-29T16:47:15.650377"
+  }
+]
