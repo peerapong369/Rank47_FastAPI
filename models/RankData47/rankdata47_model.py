@@ -33,6 +33,7 @@ class DbRankData47(Base):
     ST3 = Column(FLOAT, unique=False)
     ST4 = Column(FLOAT, unique=False)
     result = Column(String, unique=False)
+    stage = Column(Integer, unique=False)
     created_date = Column(DateTime, default=datetime.now)
     update_date = Column(
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
@@ -58,6 +59,7 @@ class RankDataBase(BaseModel):
     ST3: float
     ST4: float
     result: str
+    stage: int
 
 
 class RankDataDisplayBase(BaseModel):
@@ -81,6 +83,7 @@ class RankDataDisplayBase(BaseModel):
     ST3: float
     ST4: float
     result: str
+    stage:int
     created_date: datetime
     update_date: datetime
 
@@ -99,3 +102,4 @@ class ProductLotDisplay(BaseModel):
 
     class Config:
         orm_mode = True
+

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
 from models.database import get_db
-from models.RankData47.rankdata47_model import RankDataBase, RankDataDisplayBase, ProductGroupDisplay, ProductLotDisplay
+from models.RankData47.rankdata47_model import RankDataBase, RankDataDisplayBase, ProductGroupDisplay
 
 from routers.RankData47 import rankdata47_controller
 from utils.oauth2 import access_user_token
@@ -32,7 +32,7 @@ def productgroup(db: Session=Depends(get_db)):
     return rankdata47_controller.product_group(db)
 
 
-@router.get("/rank_lotgroup/{product}", response_model=List[ProductLotDisplay])
+@router.get("/rank_lotgroup/{product}")
 def lotgroup(product:str, db: Session=Depends(get_db)):
     return rankdata47_controller.productlot_group(db, product)
 
@@ -41,6 +41,19 @@ def lotgroup(product:str, db: Session=Depends(get_db)):
 def rankdatabyproduct_lot(product:str, lot:str, db:Session=Depends(get_db)):
     return rankdata47_controller.databygroup_lot(db, product, lot)
 
+
+@router.get("/productivityHour/{product},{lot}")
+def productivityperhour(product:str, lot:str, db: Session=Depends(get_db)):
+    return rankdata47_controller.productPerHourbyLot(db, product, lot)
+
+@router.get("/productivityMin/{product},{lot},{date},{hour}")
+def productivitypermin(product:str, lot:str,date:str, hour:str, db: Session=Depends(get_db)):
+    return rankdata47_controller.productPerMinbyLot(db, product, lot, date, hour)
+
+
+@router.get("/dategroupbylot/{product},{lot}")
+def dategroupbylot(product:str, lot:str, db: Session=Depends(get_db)):
+    return rankdata47_controller.dateGroupbyLot(db, product, lot)
 
 @router.post("/")
 def create_rankdata(request: RankDataBase, db: Session = Depends(get_db)):

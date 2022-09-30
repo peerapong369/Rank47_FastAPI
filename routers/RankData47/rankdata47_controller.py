@@ -1,4 +1,6 @@
+from cProfile import label
 from tkinter.tix import COLUMN
+from unittest import result
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from sqlalchemy.sql import func
@@ -27,7 +29,8 @@ def create(db: Session, request: RankDataBase):
         ST2=request.ST2,
         ST3=request.ST3,
         ST4=request.ST4,
-        result=request.result
+        result=request.result,
+        stage=request.stage
     )
     db.add(new_rankdata)
     db.commit()
@@ -57,10 +60,91 @@ def read_rankdata47_by_id(db: Session, id: int):
     return db.query(DbRankData47).filter(DbRankData47.id == id).first()
 
 def product_group(db: Session):
-    return db.query(DbRankData47).group_by(DbRankData47.product).all()
+    return db.query(
+            DbRankData47.product.label('product'),
+        ).group_by(
+            DbRankData47.product
+        ).all()
 
 def productlot_group(db: Session, product:str):
-    return db.query(DbRankData47).filter(DbRankData47.product==product).group_by(DbRankData47.lot).all()
+    return db.query(
+        DbRankData47.lot.label('lot'),
+        func.count(DbRankData47.id).label('count'),
+        (func.count(DbRankData47.id).label('count') - 
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0))).label('OK'),
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0)).label('NGR'),
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)).label('PP'),
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)).label('ST'),
+        func.min(DbRankData47.created_date).label('Start_date'),
+        func.max(DbRankData47.created_date).label('End_date'),
+    ).filter(
+        DbRankData47.product==product
+    ).group_by(
+        DbRankData47.lot
+    ).all()
+
+
 
 def databygroup_lot(db: Session, product:str, lot:str):
-    return db.query(DbRankData47).filter(DbRankData47.product==product and DbRankData47.lot==lot).all()
+    return db.query(
+        DbRankData47
+    ).filter(
+        DbRankData47.product==product
+    ).filter(
+        DbRankData47.lot==lot
+    ).all()
+
+
+def productPerHourbyLot(db: Session, product:str, lot:str):
+    return db.query(
+        func.strftime("%Y-%m-%d %H:00:00", DbRankData47.created_date).label('Datetime'),
+        func.count(DbRankData47.id).label('count'),
+        (func.count(DbRankData47.id).label('count') - 
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0))).label('OK'),
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0)).label('NGR'),
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)).label('PP'),
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)).label('ST'),
+    ).filter(
+        DbRankData47.product == product
+    ).filter(
+        DbRankData47.lot == lot
+    ).group_by(
+        func.strftime("%Y-%m-%d %H:00:00", DbRankData47.created_date)
+    ).all()
+
+
+def productPerMinbyLot(db: Session, product:str, lot:str, date:str, hour:str):
+    return db.query(
+        func.strftime("%Y-%m-%d %H:%M:00", DbRankData47.created_date).label('Datetime'),
+        func.count(DbRankData47.id).label('count'),
+        (func.count(DbRankData47.id).label('count') - 
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)) - 
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0))).label('OK'),
+        func.sum(func.IIf(DbRankData47.result=='NGR',1,0)).label('NGR'),
+        func.sum(func.IIf(DbRankData47.result=='PP',1,0)).label('PP'),
+        func.sum(func.IIf(DbRankData47.result=='ST',1,0)).label('ST'),
+    ).filter(
+        DbRankData47.product == product
+    ).filter(
+        DbRankData47.lot == lot
+    ).filter(
+        func.strftime("%H", DbRankData47.created_date) == hour
+    ).group_by(
+        func.strftime("%Y-%m-%d %H:%M:00", DbRankData47.created_date)
+    ).all()
+
+def dateGroupbyLot(db: Session, product:str, lot:str):
+    return db.query(
+        func.strftime("%Y-%m-%d", DbRankData47.created_date).label('Datetime'),
+    ).filter(
+        DbRankData47.product == product
+    ).filter(
+        DbRankData47.lot == lot
+    ).group_by(
+        func.strftime("%Y-%m-%d", DbRankData47.created_date)
+    ).all()
