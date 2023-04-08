@@ -34,6 +34,7 @@ class DbRankData47(Base):
     ST4 = Column(FLOAT, unique=False)
     result = Column(String, unique=False)
     stage = Column(Integer, unique=False)
+    speed = Column(FLOAT, unique=False)
     created_date = Column(DateTime, default=datetime.now)
     update_date = Column(
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
@@ -60,6 +61,7 @@ class RankDataBase(BaseModel):
     ST4: float
     result: str
     stage: int
+    speed: float
 
 
 class RankDataDisplayBase(BaseModel):
@@ -84,6 +86,7 @@ class RankDataDisplayBase(BaseModel):
     ST4: float
     result: str
     stage:int
+    speed: float
     created_date: datetime
     update_date: datetime
 

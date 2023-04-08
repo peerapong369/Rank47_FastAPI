@@ -37,8 +37,8 @@ def lotgroup(product:str, db: Session=Depends(get_db)):
     return rankdata47_controller.productlot_group(db, product)
 
 
-@router.get("/rankdataby/{product},{lot}", response_model=List[RankDataDisplayBase])
-def rankdatabyproduct_lot(product:str, lot:str, db:Session=Depends(get_db)):
+@router.get("/rankdataby/{product},{lot}")
+def rankdatabyproduct_lot(product:str, lot:str,speed:float, db:Session=Depends(get_db)):
     return rankdata47_controller.databygroup_lot(db, product, lot)
 
 

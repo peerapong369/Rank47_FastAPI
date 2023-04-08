@@ -1,5 +1,6 @@
 from cProfile import label
 from tkinter.tix import COLUMN
+from turtle import speed
 from unittest import result
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
@@ -30,7 +31,8 @@ def create(db: Session, request: RankDataBase):
         ST3=request.ST3,
         ST4=request.ST4,
         result=request.result,
-        stage=request.stage
+        stage=request.stage,
+        speed=request.speed
     )
     db.add(new_rankdata)
     db.commit()
@@ -65,6 +67,70 @@ def product_group(db: Session):
         ).group_by(
             DbRankData47.product
         ).all()
+
+
+def databygroup_lot_analysis(db: Session, product:str, lot:str, sheet_permin:float):
+    return db.query(
+        func.strftime("%Y-%m-%d %H:00:00", DbRankData47.created_date).label('Datetime'),
+        func.max(DbRankData47.created_date).label("max_datetime"),
+        func.min(DbRankData47.created_date).label("min_datetime"),
+        ((func.strftime("%s", func.max(DbRankData47.created_date))-func.strftime("%s", func.min(DbRankData47.created_date)))/60).label("min."),
+        (func.sum(
+            func.IIf(
+                DbRankData47.speed>(sheet_permin*2),
+                func.IIf(
+                    DbRankData47.speed<=60,
+                    DbRankData47.speed,0
+                ),
+                0
+            ))/60
+        ).label('Unstable1'),
+        (func.sum(
+            func.IIf(
+                DbRankData47.speed>60,
+                func.IIf(
+                    DbRankData47.speed<=600,
+                    DbRankData47.speed,0
+                ),
+                0
+            ))/60
+        ).label('Unstable2'),
+        (func.sum(
+            func.IIf(
+                DbRankData47.speed>600,
+                func.IIf(
+                    DbRankData47.speed<=3600,
+                    DbRankData47.speed,0
+                ),
+                0
+            ))/60
+        ).label('minorstop'),
+        (func.sum(
+            func.IIf(
+                DbRankData47.speed>3600,
+                func.IIf(
+                    DbRankData47.speed<=7200,
+                    DbRankData47.speed,0
+                ),
+                0
+            ))/60
+        ).label('mainstop'),
+        (func.sum(
+            func.IIf(
+                DbRankData47.speed>7200,DbRankData47.speed,0
+            ))/60
+        ).label('breakdown'),
+    ).filter(
+        DbRankData47.product==product
+    ).filter(
+        DbRankData47.lot==lot
+    ).group_by(
+        func.strftime("%Y-%m-%d %H:00:00", DbRankData47.created_date)
+    ).all()
+
+
+
+
 
 def productlot_group(db: Session, product:str):
     return db.query(
