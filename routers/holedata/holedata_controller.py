@@ -4,7 +4,7 @@ from turtle import speed
 from unittest import result
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, text
 from datetime import datetime, timedelta
 
 from models.Hole.hole_models import DbRankData47Hole, HoleDataBase
@@ -56,3 +56,27 @@ def read_holedata47_last(db: Session, start: str, end: str):
 def read_holedata47_by_id(db: Session, id: int):
     return db.query(DbRankData47Hole).filter(DbRankData47Hole.id == id).first()
 
+
+
+def product_holedata_group(db:Session):
+    return db.execute(text("select product from RankData47Hole group by product")).all()
+
+
+def lot_groupby_product(db:Session, product:str):
+    return db.execute(text("select lot from RankData47Hole where product='{}' group by lot".format(product))).all()
+
+
+def holedata_bylot(db:Session, lot:str):
+    return db.execute(text("select * from RankData47Hole where lot='{}'".format(lot))).all()
+
+
+def holedata_bylot_summary(db:Session, lot:str):
+    sql = "select strftime('%Y-%m-%d %H', created_date) as dateHour, \
+            count(id) as count, sum(IIf(OK=1 and NG=0,1,0)) as OK, \
+                sum(IIf(OK=0 and NG=1,1,0)) as NG, \
+                    sum(IIf(OK=1 and NG=1,1,0)) as Re \
+                        from RankData47Hole \
+                            where lot='{}'\
+                                GROUP BY dateHour\
+                                    ".format(lot)
+    return db.execute(text(sql)).all()

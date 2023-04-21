@@ -4,6 +4,7 @@ from models.database import engine
 # #from models.inventory import inventory_model
 # #from models.users import users_model
 from models.Hole import hole_models
+from fastapi.middleware.cors import CORSMiddleware
 # from models.RankData47 import rankdata47_model, counter_model, verify_model, verifylot_model
 # from models.Machine import machine_model
 
@@ -18,6 +19,23 @@ from routers.holedata import holedata_router
 
 
 app = FastAPI()
+
+origins = [
+    "*",
+    "http://localhost:8000",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
 # #app.include_router(authen_router.router)
 # #app.include_router(inventory_rounter.router)
 # #app.include_router(user_router.router)
